@@ -56,22 +56,22 @@ export default function BetsPage() {
   return (
     <div className="min-h-screen bg-gray-950">
       <Navbar />
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6 text-white">My Bets</h1>
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+        <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-white">My Bets</h1>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 text-center">
-            <div className="text-2xl font-bold text-white">{bets.length}</div>
-            <div className="text-xs text-gray-400 mt-1">Total Bets</div>
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-gray-900 rounded-xl border border-gray-800 p-3 sm:p-4 text-center">
+            <div className="text-lg sm:text-2xl font-bold text-white">{bets.length}</div>
+            <div className="text-[10px] sm:text-xs text-gray-400 mt-1">Total Bets</div>
           </div>
-          <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 text-center">
-            <div className="text-2xl font-bold text-red-400">₱{totalBet.toFixed(2)}</div>
-            <div className="text-xs text-gray-400 mt-1">Total Wagered</div>
+          <div className="bg-gray-900 rounded-xl border border-gray-800 p-3 sm:p-4 text-center">
+            <div className="text-base sm:text-2xl font-bold text-red-400 break-all">₱{totalBet.toFixed(2)}</div>
+            <div className="text-[10px] sm:text-xs text-gray-400 mt-1">Total Wagered</div>
           </div>
-          <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 text-center">
-            <div className="text-2xl font-bold text-green-400">₱{totalPayout.toFixed(2)}</div>
-            <div className="text-xs text-gray-400 mt-1">Total Winnings</div>
+          <div className="bg-gray-900 rounded-xl border border-gray-800 p-3 sm:p-4 text-center">
+            <div className="text-base sm:text-2xl font-bold text-green-400 break-all">₱{totalPayout.toFixed(2)}</div>
+            <div className="text-[10px] sm:text-xs text-gray-400 mt-1">Total Winnings</div>
           </div>
         </div>
 
@@ -85,18 +85,18 @@ export default function BetsPage() {
         ) : (
           <div className="space-y-3">
             {bets.map((bet) => (
-              <div key={bet.id} className="bg-gray-900 rounded-xl border border-gray-800 p-4 flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
+              <div key={bet.id} className="bg-gray-900 rounded-xl border border-gray-800 p-3 sm:p-4 flex items-center justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span className="text-gray-400 text-sm">Fight #{bet.fight_number}</span>
                     <span className={`text-xs font-bold px-2 py-0.5 rounded uppercase ${
                       bet.side === 'meron' ? 'bg-red-900 text-red-300' : 'bg-blue-900 text-blue-300'
                     }`}>{bet.side}</span>
                   </div>
-                  <div className="text-xs text-gray-500">{bet.meron_name} vs {bet.wala_name}</div>
+                  <div className="text-xs text-gray-500 truncate">{bet.meron_name} vs {bet.wala_name}</div>
                 </div>
-                <div className="text-right">
-                  <div className="text-white font-bold">₱{bet.amount.toFixed(2)}</div>
+                <div className="text-right flex-shrink-0">
+                  <div className="text-white font-bold text-sm sm:text-base">₱{bet.amount.toFixed(2)}</div>
                   <BetStatusBadge status={bet.status} payout={bet.payout} />
                 </div>
               </div>

@@ -1,8 +1,30 @@
 @import "tailwindcss";
 
+@theme {
+  --breakpoint-xs: 400px;
+}
+
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+input, select, textarea {
+  font-size: 16px;
+}
+
+@media (min-width: 640px) {
+  input, select, textarea {
+    font-size: 14px;
+  }
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
 @theme inline {

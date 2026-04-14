@@ -168,9 +168,9 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-950">
       <Navbar />
-      <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-yellow-400">Admin Panel</h1>
+      <main className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-yellow-400">Admin Panel</h1>
           {msg && (
             <div className="bg-green-900/30 text-green-400 text-sm px-4 py-2 rounded-lg">
               {msg}
@@ -179,19 +179,19 @@ export default function AdminPage() {
         </div>
 
         {/* Stream Control */}
-        <section className="bg-gray-900 rounded-xl border border-gray-800 p-6">
-          <h2 className="text-lg font-bold text-white mb-4">Live Stream URL</h2>
-          <div className="flex gap-3">
+        <section className="bg-gray-900 rounded-xl border border-gray-800 p-4 sm:p-6">
+          <h2 className="text-base sm:text-lg font-bold text-white mb-4">Live Stream URL</h2>
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
               value={newStreamUrl}
               onChange={(e) => setNewStreamUrl(e.target.value)}
               placeholder="https://youtube.com/watch?v=... or HLS/MP4 URL"
-              className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-500 transition"
+              className="flex-1 min-w-0 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-500 transition"
             />
             <button
               onClick={updateStream}
-              className="bg-yellow-600 hover:bg-yellow-500 text-white font-bold px-5 py-2.5 rounded-lg transition text-sm"
+              className="bg-yellow-600 hover:bg-yellow-500 text-white font-bold px-5 py-2.5 rounded-lg transition text-sm whitespace-nowrap"
             >
               Update Stream
             </button>
@@ -202,9 +202,9 @@ export default function AdminPage() {
         </section>
 
         {/* Create Fight */}
-        <section className="bg-gray-900 rounded-xl border border-gray-800 p-6">
-          <h2 className="text-lg font-bold text-white mb-4">Create New Fight</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <section className="bg-gray-900 rounded-xl border border-gray-800 p-4 sm:p-6">
+          <h2 className="text-base sm:text-lg font-bold text-white mb-4">Create New Fight</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div>
               <label className="text-xs text-gray-400 uppercase tracking-wider block mb-1">Fight #</label>
               <input
@@ -247,8 +247,8 @@ export default function AdminPage() {
 
         {/* Active Fight Controls */}
         {activeFight && (
-          <section className="bg-gray-900 rounded-xl border border-red-900/50 p-6">
-            <h2 className="text-lg font-bold text-red-400 mb-4">
+          <section className="bg-gray-900 rounded-xl border border-red-900/50 p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-bold text-red-400 mb-4">
               Active Fight — #{activeFight.fight_number}: {activeFight.meron_name} vs {activeFight.wala_name}
             </h2>
 
@@ -317,9 +317,9 @@ export default function AdminPage() {
         )}
 
         {/* Players & Top-up */}
-        <section className="bg-gray-900 rounded-xl border border-green-900/40 p-6">
+        <section className="bg-gray-900 rounded-xl border border-green-900/40 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-green-400">Players & Balance Top-up</h2>
+            <h2 className="text-base sm:text-lg font-bold text-green-400">Players & Balance Top-up</h2>
             <span className="text-xs text-gray-400">{players.length} players</span>
           </div>
 
@@ -336,10 +336,10 @@ export default function AdminPage() {
               .filter((p) => p.username.toLowerCase().includes(playerSearch.toLowerCase()))
               .map((player) => (
                 <div key={player.id} className="bg-gray-800 rounded-lg p-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-white font-medium">@{player.username}</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-white font-medium truncate">@{player.username}</span>
                         <span className="text-xs text-gray-500">{player.total_bets} bets</span>
                       </div>
                       <div className={`text-sm font-bold mt-0.5 ${player.balance <= 0 ? 'text-red-400' : player.balance < 100 ? 'text-yellow-400' : 'text-green-400'}`}>
@@ -349,7 +349,7 @@ export default function AdminPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                       {topupUserId === player.id ? (
                         <>
                           <input
@@ -417,8 +417,8 @@ export default function AdminPage() {
         </section>
 
         {/* Fight History */}
-        <section className="bg-gray-900 rounded-xl border border-gray-800 p-6">
-          <h2 className="text-lg font-bold text-white mb-4">Fight History</h2>
+        <section className="bg-gray-900 rounded-xl border border-gray-800 p-4 sm:p-6">
+          <h2 className="text-base sm:text-lg font-bold text-white mb-4">Fight History</h2>
           {fights.length === 0 ? (
             <p className="text-gray-500 text-sm">No fights yet</p>
           ) : (

@@ -43,11 +43,19 @@ export async function POST(request: NextRequest) {
 
       const winPool = winnerBets.reduce((s: number, b: any) => s + b.amount, 0);
       const losePool = loserBets.reduce((s: number, b: any) => s + b.amount, 0);
-      const totalPool = winPool + losePool;
+
+      // Parimutuel payout. When no opposing bets exist, fall back to a 2x
+      // payout so the winner still gets winnings instead of only their stake.
+      const MIN_MULTIPLIER = 2;
 
       for (const bet of winnerBets) {
-        const odds = winPool > 0 ? totalPool / winPool : 1;
-        const payout = bet.amount * odds;
+        let payout: number;
+        if (losePool > 0 && winPool > 0) {
+          const odds = (winPool + losePool) / winPool;
+          payout = bet.amount * Math.max(odds, MIN_MULTIPLIER);
+        } else {
+          payout = bet.amount * MIN_MULTIPLIER;
+        }
         db.prepare('UPDATE users SET balance = balance + ? WHERE id = ?').run(payout, bet.user_id);
         db.prepare('UPDATE bets SET status = ?, payout = ? WHERE id = ?').run('won', payout, bet.id);
       }

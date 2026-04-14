@@ -64,21 +64,21 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-950">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Stream + Recent Results */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6 min-w-0">
             <LiveStream streamUrl={streamUrl} />
 
             {recentFights.length > 0 && (
-              <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+              <div className="bg-gray-900 rounded-xl border border-gray-800 p-3 sm:p-4">
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Recent Results</h3>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {recentFights.map((f) => (
-                    <div key={f.id} className="flex items-center justify-between text-sm py-2 border-b border-gray-800 last:border-0">
-                      <span className="text-gray-400">Fight #{f.fight_number}</span>
-                      <div className="flex items-center gap-3">
-                        <span className="text-gray-500">{f.meron_name} vs {f.wala_name}</span>
+                    <div key={f.id} className="flex items-center justify-between gap-2 text-sm py-2 border-b border-gray-800 last:border-0">
+                      <span className="text-gray-400 flex-shrink-0">Fight #{f.fight_number}</span>
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                        <span className="text-gray-500 truncate text-xs sm:text-sm">{f.meron_name} vs {f.wala_name}</span>
                         <ResultBadge result={f.result} />
                       </div>
                     </div>
@@ -89,7 +89,7 @@ export default function Home() {
           </div>
 
           {/* Betting Panel */}
-          <div className="space-y-4">
+          <div className="space-y-4 lg:sticky lg:top-20 lg:self-start">
             {fight ? (
               user ? (
                 <BettingPanel fight={fight} userBalance={user.balance} onBetPlaced={fetchData} />
