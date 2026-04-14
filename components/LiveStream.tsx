@@ -1,5 +1,7 @@
 'use client';
 
+import { TvIcon, SignalIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+
 interface LiveStreamProps {
   streamUrl: string;
 }
@@ -36,7 +38,7 @@ export default function LiveStream({ streamUrl }: LiveStreamProps) {
   if (!streamUrl) {
     return (
       <div className="w-full aspect-video bg-gray-900 rounded-xl flex flex-col items-center justify-center border border-gray-800">
-        <span className="text-5xl mb-4">📺</span>
+        <TvIcon className="w-16 h-16 text-gray-700 mb-4" />
         <p className="text-gray-400 text-lg font-semibold">No Live Stream Available</p>
         <p className="text-gray-600 text-sm mt-1">Stream will appear here when available</p>
       </div>
@@ -47,7 +49,8 @@ export default function LiveStream({ streamUrl }: LiveStreamProps) {
 
   if (!embedUrl) {
     return (
-      <div className="w-full aspect-video bg-gray-900 rounded-xl flex items-center justify-center border border-gray-800">
+      <div className="w-full aspect-video bg-gray-900 rounded-xl flex flex-col items-center justify-center border border-gray-800">
+        <ExclamationTriangleIcon className="w-12 h-12 text-yellow-600 mb-3" />
         <p className="text-gray-500">Invalid stream URL</p>
       </div>
     );
@@ -69,8 +72,9 @@ export default function LiveStream({ streamUrl }: LiveStreamProps) {
 
   return (
     <div className="w-full aspect-video rounded-xl overflow-hidden border border-red-900/30 relative">
-      <div className="absolute top-2 left-2 z-10 flex items-center gap-1 bg-red-600/90 text-white text-xs font-bold px-2 py-1 rounded">
-        <span className="live-indicator">●</span> LIVE
+      <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5 bg-red-600/90 text-white text-xs font-bold px-2 py-1 rounded">
+        <SignalIcon className="w-3 h-3 live-indicator" />
+        LIVE
       </div>
       <iframe
         src={embedUrl}

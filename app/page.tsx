@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import LiveStream from '@/components/LiveStream';
 import BettingPanel from '@/components/BettingPanel';
 import Link from 'next/link';
+import { ClockIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 
 interface Fight {
   id: number;
@@ -102,14 +103,17 @@ export default function Home() {
               )
             ) : (
               <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 text-center">
-                <span className="text-4xl block mb-3">🐓</span>
+                <ClockIcon className="w-12 h-12 text-gray-700 mx-auto mb-3" />
                 <p className="text-gray-400 font-semibold">No Active Fight</p>
                 <p className="text-gray-600 text-sm mt-1">Next fight coming soon</p>
               </div>
             )}
 
             <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-              <h3 className="text-sm font-bold text-yellow-500 uppercase tracking-wider mb-3">How to Play</h3>
+              <h3 className="flex items-center gap-2 text-sm font-bold text-yellow-500 uppercase tracking-wider mb-3">
+                <InformationCircleIcon className="w-4 h-4" />
+                How to Play
+              </h3>
               <ol className="space-y-2 text-sm text-gray-400">
                 <li className="flex gap-2"><span className="text-red-400 font-bold">1.</span> Register and get ₱1,000 starting balance</li>
                 <li className="flex gap-2"><span className="text-red-400 font-bold">2.</span> Wait for a fight to open betting</li>

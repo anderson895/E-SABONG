@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { FireIcon, WalletIcon, Cog6ToothIcon, TicketIcon, ArrowRightOnRectangleIcon, UserPlusIcon, ArrowLeftOnRectangleIcon, SignalIcon } from '@heroicons/react/24/solid';
 
 interface User {
   id: number;
@@ -42,37 +43,43 @@ export default function Navbar() {
     <nav className="bg-gray-900 border-b border-red-900/50 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-2xl">🐓</span>
+          <FireIcon className="w-7 h-7 text-red-500" />
           <span className="text-xl font-bold text-red-500">E-SABONG</span>
-          <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full live-indicator font-bold">LIVE</span>
+          <span className="flex items-center gap-1 text-xs bg-red-600 text-white px-2 py-0.5 rounded-full live-indicator font-bold">
+            <SignalIcon className="w-3 h-3" />
+            LIVE
+          </span>
         </Link>
 
         <div className="flex items-center gap-4">
           {loading ? null : user ? (
             <>
-              <div className="text-sm text-gray-300">
-                <span className="text-gray-500">Balance:</span>{' '}
+              <div className="flex items-center gap-1.5 text-sm text-gray-300">
+                <WalletIcon className="w-4 h-4 text-green-400" />
                 <span className="text-green-400 font-bold">₱{user.balance.toFixed(2)}</span>
               </div>
               <span className="text-sm text-gray-400">@{user.username}</span>
               {user.role === 'admin' && (
                 <Link
                   href="/admin"
-                  className="text-sm bg-yellow-600 hover:bg-yellow-500 text-white px-3 py-1.5 rounded-lg transition"
+                  className="flex items-center gap-1.5 text-sm bg-yellow-600 hover:bg-yellow-500 text-white px-3 py-1.5 rounded-lg transition"
                 >
+                  <Cog6ToothIcon className="w-4 h-4" />
                   Admin
                 </Link>
               )}
               <Link
                 href="/bets"
-                className="text-sm text-gray-300 hover:text-white transition"
+                className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition"
               >
+                <TicketIcon className="w-4 h-4" />
                 My Bets
               </Link>
               <button
                 onClick={handleLogout}
-                className="text-sm bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded-lg transition"
+                className="flex items-center gap-1.5 text-sm bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded-lg transition"
               >
+                <ArrowRightOnRectangleIcon className="w-4 h-4" />
                 Logout
               </button>
             </>
@@ -80,14 +87,16 @@ export default function Navbar() {
             <>
               <Link
                 href="/login"
-                className="text-sm text-gray-300 hover:text-white transition"
+                className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition"
               >
+                <ArrowLeftOnRectangleIcon className="w-4 h-4" />
                 Login
               </Link>
               <Link
                 href="/register"
-                className="text-sm bg-red-600 hover:bg-red-500 text-white px-4 py-1.5 rounded-lg transition"
+                className="flex items-center gap-1.5 text-sm bg-red-600 hover:bg-red-500 text-white px-4 py-1.5 rounded-lg transition"
               >
+                <UserPlusIcon className="w-4 h-4" />
                 Register
               </Link>
             </>
