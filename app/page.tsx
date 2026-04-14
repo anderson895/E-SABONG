@@ -1,65 +1,141 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import Navbar from '@/components/Navbar';
+import LiveStream from '@/components/LiveStream';
+import BettingPanel from '@/components/BettingPanel';
+import Link from 'next/link';
+
+interface Fight {
+  id: number;
+  fight_number: number;
+  meron_name: string;
+  wala_name: string;
+  status: string;
+  result: string | null;
+  meron_pool: number | null;
+  wala_pool: number | null;
+}
+
+interface User {
+  id: number;
+  username: string;
+  role: string;
+  balance: number;
+}
 
 export default function Home() {
+  const [fight, setFight] = useState<Fight | null>(null);
+  const [streamUrl, setStreamUrl] = useState('');
+  const [user, setUser] = useState<User | null>(null);
+  const [recentFights, setRecentFights] = useState<Fight[]>([]);
+
+  const fetchData = useCallback(async () => {
+    const [currentRes, userRes, fightsRes] = await Promise.all([
+      fetch('/api/fights/current'),
+      fetch('/api/users/me'),
+      fetch('/api/fights'),
+    ]);
+
+    if (currentRes.ok) {
+      const data = await currentRes.json();
+      setFight(data.fight);
+      setStreamUrl(data.streamUrl);
+    }
+
+    if (userRes.ok) {
+      const data = await userRes.json();
+      setUser(data.user);
+    }
+
+    if (fightsRes.ok) {
+      const data = await fightsRes.json();
+      setRecentFights(data.fights.filter((f: Fight) => f.status === 'finished').slice(0, 5));
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 10000);
+    return () => clearInterval(interval);
+  }, [fetchData]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+    <div className="min-h-screen bg-gray-950">
+      <Navbar />
+      <main className="max-w-7xl mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Stream + Recent Results */}
+          <div className="lg:col-span-2 space-y-6">
+            <LiveStream streamUrl={streamUrl} />
+
+            {recentFights.length > 0 && (
+              <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Recent Results</h3>
+                <div className="space-y-2">
+                  {recentFights.map((f) => (
+                    <div key={f.id} className="flex items-center justify-between text-sm py-2 border-b border-gray-800 last:border-0">
+                      <span className="text-gray-400">Fight #{f.fight_number}</span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-gray-500">{f.meron_name} vs {f.wala_name}</span>
+                        <ResultBadge result={f.result} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Betting Panel */}
+          <div className="space-y-4">
+            {fight ? (
+              user ? (
+                <BettingPanel fight={fight} userBalance={user.balance} onBetPlaced={fetchData} />
+              ) : (
+                <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 text-center">
+                  <p className="text-gray-400 mb-4">Login to place bets</p>
+                  <Link href="/login" className="bg-red-600 hover:bg-red-500 text-white px-6 py-2 rounded-lg transition inline-block">
+                    Login
+                  </Link>
+                </div>
+              )
+            ) : (
+              <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 text-center">
+                <span className="text-4xl block mb-3">🐓</span>
+                <p className="text-gray-400 font-semibold">No Active Fight</p>
+                <p className="text-gray-600 text-sm mt-1">Next fight coming soon</p>
+              </div>
+            )}
+
+            <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+              <h3 className="text-sm font-bold text-yellow-500 uppercase tracking-wider mb-3">How to Play</h3>
+              <ol className="space-y-2 text-sm text-gray-400">
+                <li className="flex gap-2"><span className="text-red-400 font-bold">1.</span> Register and get ₱1,000 starting balance</li>
+                <li className="flex gap-2"><span className="text-red-400 font-bold">2.</span> Wait for a fight to open betting</li>
+                <li className="flex gap-2"><span className="text-red-400 font-bold">3.</span> Choose <span className="text-red-400 font-bold mx-1">MERON</span> or <span className="text-blue-400 font-bold mx-1">WALA</span></li>
+                <li className="flex gap-2"><span className="text-red-400 font-bold">4.</span> Enter your bet amount and confirm</li>
+                <li className="flex gap-2"><span className="text-red-400 font-bold">5.</span> Watch the live stream and win!</li>
+              </ol>
+            </div>
+          </div>
         </div>
       </main>
     </div>
+  );
+}
+
+function ResultBadge({ result }: { result: string | null }) {
+  if (!result) return null;
+  const map: Record<string, string> = {
+    meron: 'bg-red-900 text-red-300',
+    wala: 'bg-blue-900 text-blue-300',
+    draw: 'bg-yellow-900 text-yellow-300',
+    cancelled: 'bg-gray-800 text-gray-400',
+  };
+  return (
+    <span className={`text-xs font-bold px-2 py-0.5 rounded uppercase ${map[result] || 'bg-gray-800 text-gray-400'}`}>
+      {result}
+    </span>
   );
 }
