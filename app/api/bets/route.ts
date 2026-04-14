@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { getDb } from '@/lib/db';
+import { broadcast } from '@/lib/ws';
 
 export async function POST(request: NextRequest) {
   const session = await getSession();
@@ -52,6 +53,8 @@ export async function POST(request: NextRequest) {
   });
 
   const betId = placeBet();
+
+  broadcast('bet:placed', { fightId, side, amount });
 
   return NextResponse.json({ success: true, betId });
 }

@@ -3,7 +3,18 @@
     "allow": [
       "Bash(npx tsc:*)",
       "Bash(node -e \"const db=require\\('better-sqlite3'\\)\\('esabong.db'\\); console.log\\('Recent finished fights:'\\); console.log\\(db.prepare\\(\\\\\"SELECT id, fight_number, status, result FROM fights WHERE status='finished' ORDER BY id DESC LIMIT 5\\\\\"\\).all\\(\\)\\); console.log\\('Bets on those:'\\); console.log\\(db.prepare\\(\\\\\"SELECT id, user_id, fight_id, side, amount, payout, status FROM bets WHERE fight_id IN \\(SELECT id FROM fights WHERE status='finished'\\) ORDER BY id DESC LIMIT 20\\\\\"\\).all\\(\\)\\); console.log\\('Users:'\\); console.log\\(db.prepare\\('SELECT id, username, balance FROM users'\\).all\\(\\)\\);\")",
-      "Bash(node -e ':*)"
+      "Bash(node -e ':*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/admin)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/bets)",
+      "Bash(pkill -f \"tsx server.ts\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/api/users/me)",
+      "Bash(curl:*)",
+      "Bash(node -e \"require\\('@heroicons/react/24/solid'\\)\")",
+      "Bash(node:*)",
+      "Bash(taskkill:*)"
     ]
   }
 }

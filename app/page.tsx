@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Navbar from '@/components/Navbar';
 import LiveStream from '@/components/LiveStream';
 import BettingPanel from '@/components/BettingPanel';
 import Link from 'next/link';
 import { ClockIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 interface Fight {
   id: number;
@@ -57,9 +58,18 @@ export default function Home() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 10000);
-    return () => clearInterval(interval);
   }, [fetchData]);
+
+  // Re-fetch data on any WebSocket event from the server
+  const wsEvents = useMemo(() => ({
+    'fight:created': fetchData,
+    'fight:status': fetchData,
+    'fight:result': fetchData,
+    'bet:placed': fetchData,
+    'stream:updated': fetchData,
+  }), [fetchData]);
+
+  useWebSocket(wsEvents);
 
   return (
     <div className="min-h-screen bg-gray-950">

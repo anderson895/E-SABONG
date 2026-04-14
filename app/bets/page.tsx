@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 interface Bet {
   id: number;
@@ -24,7 +25,7 @@ export default function BetsPage() {
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
 
-  useEffect(() => {
+  const fetchBets = useCallback(() => {
     fetch('/api/bets/my')
       .then((r) => {
         if (r.status === 401) { setUnauthorized(true); return null; }
@@ -35,6 +36,17 @@ export default function BetsPage() {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    fetchBets();
+  }, [fetchBets]);
+
+  const wsEvents = useMemo(() => ({
+    'fight:result': fetchBets,
+    'bet:placed': fetchBets,
+  }), [fetchBets]);
+
+  useWebSocket(wsEvents);
 
   if (unauthorized) {
     return (

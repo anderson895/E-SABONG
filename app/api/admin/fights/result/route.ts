@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { getDb } from '@/lib/db';
+import { broadcast } from '@/lib/ws';
 
 export async function POST(request: NextRequest) {
   const session = await getSession();
@@ -67,6 +68,8 @@ export async function POST(request: NextRequest) {
   });
 
   settleResult();
+
+  broadcast('fight:result', { fightId, result });
 
   return NextResponse.json({ success: true });
 }

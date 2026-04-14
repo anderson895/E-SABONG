@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { getDb } from '@/lib/db';
+import { broadcast } from '@/lib/ws';
 
 export async function POST(request: NextRequest) {
   const session = await getSession();
@@ -12,6 +13,8 @@ export async function POST(request: NextRequest) {
 
   const db = getDb();
   db.prepare('UPDATE stream_config SET stream_url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = 1').run(streamUrl || '');
+
+  broadcast('stream:updated', { streamUrl });
 
   return NextResponse.json({ success: true });
 }

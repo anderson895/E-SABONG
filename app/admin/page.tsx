@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Navbar from '@/components/Navbar';
 import { useRouter } from 'next/navigation';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 interface Player {
   id: number;
@@ -42,38 +43,51 @@ export default function AdminPage() {
   const router = useRouter();
 
   const fetchData = useCallback(async () => {
-    const [userRes, fightsRes, streamRes, playersRes] = await Promise.all([
-      fetch('/api/users/me'),
-      fetch('/api/fights'),
-      fetch('/api/admin/stream'),
-      fetch('/api/admin/users'),
-    ]);
+    try {
+      const userRes = await fetch('/api/users/me');
+      if (!userRes.ok) { router.push('/login'); return; }
+      const userData = await userRes.json();
+      if (userData.user.role !== 'admin') { router.push('/'); return; }
+      setAuthorized(true);
 
-    if (!userRes.ok) { router.push('/login'); return; }
-    const userData = await userRes.json();
-    if (userData.user.role !== 'admin') { router.push('/'); return; }
-    setAuthorized(true);
+      const [fightsRes, streamRes, playersRes] = await Promise.all([
+        fetch('/api/fights'),
+        fetch('/api/admin/stream'),
+        fetch('/api/admin/users'),
+      ]);
 
-    if (fightsRes.ok) {
-      const data = await fightsRes.json();
-      setFights(data.fights);
-    }
+      if (fightsRes.ok) {
+        const data = await fightsRes.json();
+        setFights(data.fights);
+      }
 
-    if (streamRes.ok) {
-      const data = await streamRes.json();
-      setStreamUrl(data.streamUrl);
-      setNewStreamUrl(data.streamUrl);
-    }
+      if (streamRes.ok) {
+        const data = await streamRes.json();
+        setStreamUrl(data.streamUrl);
+        setNewStreamUrl(data.streamUrl);
+      }
 
-    if (playersRes.ok) {
-      const data = await playersRes.json();
-      setPlayers(data.users);
+      if (playersRes.ok) {
+        const data = await playersRes.json();
+        setPlayers(data.users);
+      }
+    } catch {
+      router.push('/login');
     }
   }, [router]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  const wsEvents = useMemo(() => ({
+    'fight:created': fetchData,
+    'fight:status': fetchData,
+    'fight:result': fetchData,
+    'bet:placed': fetchData,
+  }), [fetchData]);
+
+  useWebSocket(wsEvents);
 
   const createFight = async () => {
     setLoading(true);
@@ -156,8 +170,11 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen bg-gray-950">
         <Navbar />
-        <div className="flex items-center justify-center h-96">
+        <div className="flex flex-col items-center justify-center h-96 gap-4">
           <p className="text-gray-400">Checking permissions...</p>
+          <a href="/login" className="text-red-400 hover:text-red-300 text-sm underline">
+            Go to Login
+          </a>
         </div>
       </div>
     );
